@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  # استفاده از جعبه اوبونتو 22.04
+  #  اوبونتو 22.04
   config.vm.box = "ubuntu/jammy64"
   config.vm.box_version = "20241002.0.0"
   

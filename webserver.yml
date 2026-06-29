@@ -1,0 +1,36 @@
+---
+- name: Configure Web Server
+  hosts: webservers
+  become: yes  # اجرای دستورات با دسترسی root
+
+  tasks:
+    # ۱. مطمئن شو آخرین ورژن Nginx نصب است
+    - name: Ensure Nginx is installed
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    # ۲. فایل کانفیگ خاص ما را در سرور قرار بده
+    - name: Copy custom nginx config
+      copy:
+        src: ./files/nginx.conf
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart nginx  # اگر فایل عوض شد، سرور را ریستارت کن
+
+    # ۳. مطمئن شو سرویس همیشه روشن است
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  handlers:
+    # هندلرها فقط زمانی اجرا می‌شوند که تغییری (مثل تغییر فایل کانفیگ) رخ داده باشد
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
